@@ -4,7 +4,8 @@
 // * The user arrives at the landing page and is presented with a call-to-action to "Start Quiz." Also note the navigation option to "View Highscores" and the "Time" value set at 0.
 // add highscores on page? date and time?
 var quizType = document.getElementById('quizType'); // select with js, html, css
-var startBtn = document.getElementById('startBtn');
+var startJs = document.getElementById('startJs');
+var startHtml = document.getElementById('startHtml');
 var highScores = document.getElementById('highScores');
 var timeDisplay = document.getElementById('timeDisplay'); // display time remaining
 var countdown = document.getElementById('countdown');
