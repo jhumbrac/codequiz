@@ -24,17 +24,15 @@ var timeDisplay = document.getElementById('timeDisplay'); // display time remain
 var score = 0;
 var j = 0;
 var k = 0;
-var finalScore = document.getElementById('finalScore'); // pop up display possibly modal
-var error = this.addClass = 'error'; // function?
 
-var initialsEntry = document.getElementById('initialsEntry');
-var initials = document.getElementById('initials');
+
 // initials.textContent = initialsEntry.value;
 // initials should be an object with key = initials, value = score. sorted high to low?
 // bonus get date/time
 
 var interval;
 var timeRemaining = 60;
+
 function penalty() {
     timeRemaining -= 15;
     return timeRemaining;
@@ -117,6 +115,24 @@ function jsQuiz() {
                 removeContent();
                 stopTimer();
                 question.textContent = `Congratulations! You finished with a score of ${finalScore}`;
+
+                var initials = document.createElement('input');
+                var initialsLabel = document.createElement('label');
+                var initialsEntry = initials.value;
+
+                initials.setAttribute('type', 'text');
+                initials.setAttribute('id', 'initialsEntry');
+                initials.required = true;
+                initialsLabel.setAttribute('class', 'labelOverlay');
+                initialsLabel.setAttribute('for', 'initialsEntry')
+                initialsLabel.textContent = 'Enter your name';
+    
+                formDiv.append(initials);
+                formDiv.append(initialsLabel);
+
+                localStorage.setItem(initialsEntry, finalScore);
+                console.log(localStorage);
+
                 finishedBtn.classList.remove('hidden');
                 answerBtn.classList.add('hidden');
                 // need to add a start over button that returns you to home page

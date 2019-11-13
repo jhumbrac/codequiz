@@ -50,6 +50,9 @@ button:hover {
     display:none;
 }
 form { margin-top:1em;}
+#formDiv {
+    position:relative;
+}
 label {
     border:1px solid;
     cursor:pointer;
@@ -62,6 +65,35 @@ input[type=radio] {
 }
 input:checked + label {
     background:#f0f2eb;
+}
+input[type=text] {
+    border: none;
+    cursor: text;
+    display: block;
+    font: inherit;
+    margin-left: 1%;
+    padding: 1.5em 1.5em 1em;
+    width: 98%;
+}
+.labelOverlay {
+    border: none;
+    color: rgba(0,0,0,.45);
+    cursor: text;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    left: 2em;
+    top: 50%;
+    transform: translateY(-50%);
+}
+input[type=text]:focus + .labelOverlay, input[type=text]:valid + .labelOverlay {
+    font-size: .5em;
+    top:25%;
+    left: 4em;
+    color: #f28e85;
+}
+input:focus, label:focus, button:focus {
+    outline:none;
 }
 #timeDisplay {
     font-size: 6em;
