@@ -102,6 +102,11 @@ input:focus, label:focus, button:focus {
     top: 0;
     left: .25em;
 }
+#highScores {
+    position: fixed;
+    top: 0;
+    right: 1em;
+}
 .clearfix:after, .wrapper:after {
     content:"";
     clear:both;

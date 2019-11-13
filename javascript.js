@@ -21,7 +21,9 @@ var htmlWrapper = document.getElementById('htmlWrapper');
 var highScores = document.getElementById('highScores');
 var timeDisplay = document.getElementById('timeDisplay'); // display time remaining
 
+
 var score = 0;
+var finalScore = 0;
 var j = 0;
 var k = 0;
 
@@ -37,7 +39,6 @@ function penalty() {
     timeRemaining -= 15;
     return timeRemaining;
 } 
-
 function setTime() {
     clearInterval(interval);
     timeDisplay.textContent = timeRemaining;
@@ -58,16 +59,23 @@ function startTimer() {
         renderTime();
     }, 1000);
 };
-
 // * Clicking the "Start Quiz" button presents the user with a series of questions. The timer is initialized with a value and immediately begins countdown.
 function removeContent() {
     formDiv.innerHTML = '';
 }
+function postScores() {
+    var scores = document.createElement('p');
+    scores.textContent = `${localStorage.getItem(initialsEntry)} : ${localStorage.getItem(finalScore)}`;
+    scores.setAttribute('class', 'scores');
+    highScores.append(scores);
+}
+
 function startQuiz() {
     introWrapper.classList = 'wrapper hidden'; // .add() need help with className vs classList!
     jsWrapper.classList = 'wrapper';
 }
 function startOver() {
+    event.preventDefault();
     jsWrapper.classList = 'wrapper hidden'; // .add() need help with className vs classList!
     introWrapper.classList = 'wrapper';
     // save local storage
@@ -133,6 +141,8 @@ function jsQuiz() {
                 localStorage.setItem(initialsEntry, finalScore);
                 console.log(localStorage);
 
+                postScores();
+
                 finishedBtn.classList.remove('hidden');
                 answerBtn.classList.add('hidden');
                 // need to add a start over button that returns you to home page
@@ -143,54 +153,75 @@ function jsQuiz() {
         }
     });
 };
-// function htmlQuiz(){
-//     startQuiz();
-//     removeContent();
-//     question.textContent = htmlQuestions[k].title;
-//     for (var i = 0; i < htmlQuestions[k].choices.length; i++) {
-//         var answersLabel = document.createElement('label');
-//         var answersRadio = document.createElement('input');
+function htmlQuiz() {
+    startQuiz();
+    removeContent();
+    startTimer();
+    question.textContent = htmlQuestions[k].title;
+    for (var i = 0; i < htmlQuestions[k].choices.length; i++) {
+        var answersLabel = document.createElement('label');
+        var answersRadio = document.createElement('input');
         
-//         answersRadio.setAttribute('type', 'radio');
-//         answersRadio.setAttribute('name', 'answer');
-//         answersRadio.setAttribute('id', `choice${i}`); // check attribut api to see if they can be combined
-//         answersLabel.textContent = htmlQuestions[k].choices[i];
-//         answersLabel.setAttribute('for', `choice${i}`);
+        answersRadio.setAttribute('type', 'radio');
+        answersRadio.setAttribute('name', 'answer');
+        answersRadio.setAttribute('id', `choice${i}`); // check attribut api to see if they can be combined
+        answersLabel.textContent = htmlQuestions[k].choices[i];
+        answersLabel.setAttribute('for', `choice${i}`);
 
-//         formDiv.appendChild(answersRadio);
-//         formDiv.appendChild(answersLabel);
+        formDiv.appendChild(answersRadio);
+        formDiv.appendChild(answersLabel);
         
-//     } // should this event listener be located inside the function? I feel like there's a better way to do this
-//     answerBtn.addEventListener('click', event=>{
-//         event.preventDefault();
-//         var answersElm = document.querySelector('input:checked + label');
-//         // check to see if an option is selected when answerBtn is pressed
-//         if (answersElm) { // research json collections. not necessary here but still look up
-//             var answers = answersElm.textContent;
-//             if (answers === htmlQuestions[k].answer) {
-//                 score++;
-            
-                
-//             }
-//             else {
-//                 score--;
-//                 console.log(answers, htmlQuestions[k].answer, score);
-//             }
-//             // increment k to move to next question or check for completion
-//             k++;
+    } // should this event listener be located inside the function? I feel like there's a better way to do this
+    answerBtn.addEventListener('click', event => {
+        event.preventDefault();
+        var answersElm = document.querySelector('input:checked + label');
+        // check to see if an option is selected when answerBtn is pressed
+        if (answersElm) { // research json collections. not necessary here but still look up
+            var answers = answersElm.textContent;
+            if (answers === htmlQuestions[k].answer) {
+                score += 10; 
+            }
+            else {
+                penalty();
+            }
 
-//             if (k === htmlQuestions.length) {
-//                 removeContent();
-//                 question.textContent = `Congratulations! You finished with a score of ${score} out of 5`;
-//                 finishedBtn.classList.remove('hidden');
-//                 answerBtn.classList.add('hidden');
-//                 // need to add a start over button that returns you to home page
-//             }else {
-//                 htmlQuiz();
-//             }
-//         }
-//     });
-// }
+            k++;
+
+            if (k === htmlQuestions.length) {
+                var finalScore = score + timeRemaining;
+                removeContent();
+                stopTimer();
+                question.textContent = `Congratulations! You finished with a score of ${finalScore}`;
+
+                var initials = document.createElement('input');
+                var initialsLabel = document.createElement('label');
+                var initialsEntry = initials.value;
+
+                initials.setAttribute('type', 'text');
+                initials.setAttribute('id', 'initialsEntry');
+                initials.required = true;
+                initialsLabel.setAttribute('class', 'labelOverlay');
+                initialsLabel.setAttribute('for', 'initialsEntry')
+                initialsLabel.textContent = 'Enter your name';
+    
+                formDiv.append(initials);
+                formDiv.append(initialsLabel);
+
+                localStorage.setItem(initialsEntry, finalScore);
+                console.log(localStorage);
+
+                postScores();
+
+                finishedBtn.classList.remove('hidden');
+                answerBtn.classList.add('hidden');
+                // need to add a start over button that returns you to home page
+            }
+            else {
+                htmlQuiz();
+            }
+        }
+    });
+};
 
 startJs.addEventListener('click', jsQuiz); // prevent default?
 startHtml.addEventListener('click', htmlQuiz);
