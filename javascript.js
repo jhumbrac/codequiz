@@ -49,6 +49,7 @@ function renderTime() {
     timeDisplay.textContent = timeRemaining;
 }
 function startTimer() {
+    timeRemaining = 60;
     setTime();
 
     interval = setInterval( ()=>{
@@ -100,8 +101,7 @@ function nextQuestion(quiz) {
         }
         
     } else {
-        var initialsEntry = initials.value;
-        var finalScore = score + timeRemaining;
+        finalScore = score + timeRemaining;
         removeContent();
         toggleHidden(answerBtn, finishedBtn);
         stopTimer();
@@ -117,8 +117,17 @@ function nextQuestion(quiz) {
         formDiv.append(initials);
         formDiv.append(initialsLabel);
         
-        highScores.push({initialsEntry, finalScore});
-        localStorage.setItem('a', JSON.stringify(highScores));
+    }
+}
+function showHighScores() {
+    JSON.parse(localStorage.a);
+    highScores.forEach(element => {
+        var scoreItem = $('<p>').text(initialsEntry, finalScore);
+        highScoresDisplay.append(scoreItem);
+    });
+    localStorage.setItem('a', JSON.stringify(highScores));
+    console.log(highScores);
+}
         // create new object for scores
         // then need to JSON.stringify(newObj)
         // localStorage.setItem('a', JSON.stringify(newObj));
@@ -129,8 +138,7 @@ function nextQuestion(quiz) {
         // Can only store completed objects, so to append
         // you need to parse strings back into objects,
         // append objects, then re-stringify to save anew
-    }
-}
+
 function createAnswersList(quiz) {
     question.textContent = quiz[j].title;
     for (var i = 0; i < quiz[j].choices.length; i++) {
@@ -148,6 +156,7 @@ function createAnswersList(quiz) {
     }
 }
 function quiz(selection) {
+    j = 0;
     toggleHidden(jsWrapper, introWrapper);
     removeContent();
     startTimer();
@@ -178,8 +187,13 @@ answerBtn.addEventListener('click', event => {
 startJs.addEventListener('click', function(){quiz(jsQuestions)}); // prevent default?
 startHtml.addEventListener('click', function(){quiz(htmlQuestions)});
 finishedBtn.addEventListener('click', event => {
+    var initialsElement = document.querySelector('#initialsEntry');
     event.preventDefault();
+    highScores.push({initials: initialsElement.value, finalScore});
+    localStorage.setItem('a', JSON.stringify(highScores));
+    showHighScores();
     toggleHidden(introWrapper, jsWrapper);
+    toggleHidden(finishedBtn, answerBtn);
 });
 
 
