@@ -124,7 +124,7 @@ function nextQuestion(quiz) {
         initials.required = true;
         initialsLabel.setAttribute('class', 'labelOverlay');
         initialsLabel.setAttribute('for', 'initialsEntry')
-        initialsLabel.textContent = 'Enter your name';
+        initialsLabel.textContent = 'Enter Your Initials';
 
         formDiv.append(initials);
         formDiv.append(initialsLabel);
