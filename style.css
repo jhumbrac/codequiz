@@ -66,6 +66,19 @@ input[type=radio] {
 input:checked + label {
     background:#f0f2eb;
 }
+input:checked + .error {
+    background: #f28e85;
+    position:relative;
+    animation: shake .25s;
+    animation-iteration-count: 1;
+}
+@keyframes shake {
+    0% { left:0; }
+    33.33% { left:1em; }
+    66.66% { left:-1em; }
+    100% { left:0; }
+}
+
 input[type=text] {
     border: none;
     cursor: text;
@@ -98,9 +111,10 @@ input:focus, label:focus, button:focus {
 #timeDisplay {
     font-size: 6em;
     font-weight: 300;
+    line-height: 1;
     position: fixed;
     top: 0;
-    left: .25em;
+    left: .1em;
 }
 #highScores {
     position: fixed;
@@ -111,12 +125,9 @@ input:focus, label:focus, button:focus {
     font-size: 1.5em;
 }
 #highScores h2 {
-    
-font-size: 3.25em;
-    
-border-bottom: .1em solid;
-    
-line-height: .8;
+    font-size: 3.25em;
+    border-bottom: .1em solid;
+    line-height: .8;
 }
 .clearfix:after, .wrapper:after {
     content:"";

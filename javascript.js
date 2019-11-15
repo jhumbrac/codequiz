@@ -24,10 +24,6 @@ var score = 0;
 var finalScore = 0;
 var j = 0;
 
-// initials.textContent = initialsEntry.value;
-// initials should be an object with key = initials, value = score. sorted high to low?
-// bonus get date/time
-
 // interval needs to be set independently as a variable to separate from setInterval/clearInterval  - clearInterval stops the timer, but a var interval keeps the time separately
 var interval;
 var timeRemaining = 60;
@@ -35,13 +31,21 @@ function checkHighScores(){
     if(localStorage.a) {
         highScores = JSON.parse(localStorage.a);
     } else {
-        highScores = [ ];
+        highScores = [
+            {initials: 'JWH', finalScore: 82 },
+            {initials: 'RMM', finalScore: 67 },
+            {initials: 'MEH', finalScore: 64 },
+            {initials: 'ZER', finalScore: 49 },
+            {initials: 'HOB', finalScore: 21 }
+        ];
     }
 }
 checkHighScores();
-function penalty() {
+function penalty(item) {
+    console.log(item);
+    item.classList += 'error';
     timeRemaining -= 15;
-    return timeRemaining;
+    score -= 10;
 }
 function setTime() {
     clearInterval(interval);
@@ -116,6 +120,7 @@ function nextQuestion(quiz) {
 
         initials.setAttribute('type', 'text');
         initials.setAttribute('id', 'initialsEntry');
+        initials.setAttribute('maxlength', '3');
         initials.required = true;
         initialsLabel.setAttribute('class', 'labelOverlay');
         initialsLabel.setAttribute('for', 'initialsEntry')
@@ -175,7 +180,7 @@ function compareAnswers() {
             score += 10;
             nextQuestion(htmlQuestions);
         } else {
-            penalty();
+            penalty(answersElm);
         }
     } else { alert('Please select an answer');}
 }
