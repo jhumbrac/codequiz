@@ -31,7 +31,14 @@ var j = 0;
 // interval needs to be set independently as a variable to separate from setInterval/clearInterval  - clearInterval stops the timer, but a var interval keeps the time separately
 var interval;
 var timeRemaining = 60;
-
+function checkHighScores(){
+    if(localStorage.a) {
+        highScores = JSON.parse(localStorage.a);
+    } else {
+        highScores = [ ];
+    }
+}
+checkHighScores();
 function penalty() {
     timeRemaining -= 15;
     return timeRemaining;
@@ -60,12 +67,12 @@ function startTimer() {
 function removeContent() {
     formDiv.innerHTML = '';
 }
-function postScores() {
-    var scores = document.createElement('p');
-    scores.textContent = `${localStorage.getItem(initialsEntry)} : ${localStorage.getItem(finalScore)}`;
-    scores.setAttribute('class', 'scores');
-    highScoresDisplay.append(scores);
-}
+// function postScores() {
+//     var scores = document.createElement('p');
+//     scores.textContent = `${highScores[0].initials}: ${highScores[0].finalScore}`;
+//     scores.setAttribute('class', 'scores');
+//     highScoresDisplay.append(scores);
+// }
 
 // function startQuiz() {
 //     toggleHidden(introWrapper, jsWrapper );
@@ -120,24 +127,18 @@ function nextQuestion(quiz) {
     }
 }
 function showHighScores() {
-    JSON.parse(localStorage.a);
-    highScores.forEach(element => {
-        var scoreItem = $('<p>').text(initialsEntry, finalScore);
-        highScoresDisplay.append(scoreItem);
+    // JSON.parse(localStorage.a);
+    $(highScoresDisplay).html('');
+    $(highScoresDisplay).append( $('<h2>').text('HS') );
+    highScores.forEach(obj => {
+        var scoreItem = $('<p>').text(`${obj.initials}: ${obj.finalScore}`);
+        $(highScoresDisplay).append(scoreItem);
     });
-    localStorage.setItem('a', JSON.stringify(highScores));
+//    localStorage.setItem('a', JSON.stringify(highScores));
     console.log(highScores);
 }
-        // create new object for scores
-        // then need to JSON.stringify(newObj)
-        // localStorage.setItem('a', JSON.stringify(newObj));
-        // JSON.parse(localStorage.getItem('a));
-        //  OR   JSON.parse(localStorage.a);
+showHighScores();
 
-        // Can only store strings - cannot append in localStorage
-        // Can only store completed objects, so to append
-        // you need to parse strings back into objects,
-        // append objects, then re-stringify to save anew
 
 function createAnswersList(quiz) {
     question.textContent = quiz[j].title;
@@ -178,29 +179,41 @@ function compareAnswers() {
         }
     } else { alert('Please select an answer');}
 }
-
-// Should be possible to just have function quiz and pass which quiz as an argument
+function sortScores() {
+    // $wrapper.find('.test').sort(function (a, b) {
+    //     return +a.dataset.percentage - +b.dataset.percentage;
+    // })
+    // .appendTo( $wrapper );
+    highScores.sort(function (a, b) {
+        console.log('a.value - b.value', highScores.length);
+        return b.finalScore - a.finalScore;
+    });
+    if(highScores.length >= 6 ) {
+        console.log('before pop', highScores.length);
+        highScores.pop();
+        console.log('after pop', highScores.length)
+    } else {
+        console.log('else', highScores.length);
+    }
+}
 answerBtn.addEventListener('click', event => {
     event.preventDefault();
     compareAnswers();
 });
-startJs.addEventListener('click', function(){quiz(jsQuestions)}); // prevent default?
+startJs.addEventListener('click', function(){quiz(jsQuestions)});
 startHtml.addEventListener('click', function(){quiz(htmlQuestions)});
 finishedBtn.addEventListener('click', event => {
-    var initialsElement = document.querySelector('#initialsEntry');
     event.preventDefault();
-    highScores.push({initials: initialsElement.value, finalScore});
+
+    var initialsElement = document.querySelector('#initialsEntry');
+    var initialsEntry = initialsElement.value.toUpperCase();
+    
+    highScores.push({initials: initialsEntry, finalScore}); // if less than 6 show. always replace the 6th and sort by top. Only display 5. Use pop and push
+    sortScores();
+    console.log(highScores);
     localStorage.setItem('a', JSON.stringify(highScores));
+
     showHighScores();
     toggleHidden(introWrapper, jsWrapper);
     toggleHidden(finishedBtn, answerBtn);
 });
-
-
-
-
-
-
-// * Score is calculated by time remaining. Answering quickly and correctly results in a higher score. Answering incorrectly results in a time penalty (for example, 15 seconds are subtracted from time remaining).
-
-// * When time runs out and/or all questions are answered, the user is presented with their final score and asked to enter their initials. Their final score and initials are then stored in `localStorage`.
